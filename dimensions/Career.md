@@ -22,7 +22,8 @@ STATS:
         Tools: Data Engineering, Data Modelling
         Result: Data Engineering => 2
 
-> Kafka Learning Goal
+> Kafka Learning Goal 
+[>--------------------------------------------]
         Finishing the Learning goal course on Kafka
         Tools: Kafka, Kafka Connect
         Result: Kafka => 3, Kafka Connect => 2

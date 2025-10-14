@@ -1,0 +1,36 @@
+
+####################  INTERVIEW 1  #########################
+
+- Id      : 1
+  Company :
+  Role    : Data Engineer
+  Mode    : Virtual
+  Date    : 01/07/2025
+  Rounds  :
+    - Round1    : Zoom INTERVIEW
+      Questions : 
+        - "Introduce yourself ??"
+        - "Do you have any experience in a Data Warehouse like RedShift ??"
+        - "How do you migrate from Sybase to SQL Server ??"
+        - "Have you worked on any API ??"
+        - "How do you encrypt an API ??"
+  Result  : "No Response"
+  Rating  : 3/10
+
+####################  INTERVIEW 2  #########################
+
+- Id      : 2
+  Company : Deloitte
+  Role    : Backed API developer with AWS experience
+  Mode    : Virtual
+  Date    : 11/10/2025
+  Rounds  :
+    - Round1    : Zoom INTERVIEW
+      Questions :
+        - "Introduce yourself ??"
+        - "Explain the Lifecycles in S3 ??"
+        - "What are Glue crawlers ??"
+        - "What are 'Partition Key', 'Sort Key' in Dynamo db"
+        - "Any experience in Compute region like EC2 ??"
+        - "How do you notify if a new user is registered ??"    : "I would use lambda to trigger an SNS"
+        - "How would you rate yourself in SQL"                  : "I am a 7/10"
