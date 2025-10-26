@@ -7,17 +7,9 @@ STATS:
 
 ------------------------------- ONGOING QUESTS ----------------------------------
 
-> Pushups 18
-
-> Center Pushups 13
-
-> Hindu Pushups 8
-
-> Legs Up 18
-
-> Plank 80 sec
-
-> Weights 10kg 27 rep
+- [ ] Join office gym from November
+    <!-- Get the details (Rs.600) -->
+    > Get through onec gym web app
 
 ---------------------------------- SKILLS ---------------------------------------
 
@@ -25,6 +17,7 @@ STATS:
 - Bicep         [###-------]
 - Tricep        [###-------]
 - Heart         [##--------]
-- Legs          [##--------]      
+- Legs          [##--------]
+- Abs           [#---------]    
 
 -----------------------------------------------------------------------------------------

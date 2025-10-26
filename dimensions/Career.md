@@ -7,11 +7,6 @@ STATS:
 
 ------------------------------- ONGOING QUESTS ----------------------------------
 
-> SnowFlake Project
-        Creating an End to End SnowFlake pipeline to display AQI in India
-        Tools: SnowFlake, SQL, Steramlint, Python
-        Result: SnowFlake => 3
-
 > AWS Data Engineering Certification
         Preparing and Passing the AWS Data Engineering Certification exam
         Tools: S3, GLUE, RedShift, Kinesis, VPC
@@ -22,17 +17,6 @@ STATS:
         Tools: Data Engineering, Data Modelling
         Result: Data Engineering => 2
 
-> Kafka Learning Goal 
-[>--------------------------------------------]
-        Finishing the Learning goal course on Kafka
-        Tools: Kafka, Kafka Connect
-        Result: Kafka => 3, Kafka Connect => 2
-
-> Kubernetes
-		Finishing the Learning goal course on Kubernetes
-		Tools: Kubernetes
-		Result: Kubernetes => 2
-
 ---------------------------------- SKILLS ---------------------------------------
 
 - Python            [######----]
@@ -42,14 +26,16 @@ STATS:
 - Redshift          [#---------]
 - Airflow           [##--------]
 - DataBricks        [#---------]
-- SnowFlake         [##--------] 
+- SnowFlake         [###-------] 
 - Oracle DB         [#---------]
 - Docker            [###-------]
-- Kubernetes		[----------]
+- Linux             [##--------]
+- Kubernetes	    [##--------]
 - AWS               [##--------]
 - DataEngineering   [##--------]
 - Kafka             [#---------]
-- Kafka Connect     [----------]
+- Streamlit         [##--------]
+- Github Actions    [##--------]
 
 -----------------------------------------------------------------------------------------
 
@@ -71,10 +57,19 @@ Created a project using the item
 Knows the architechture behind the item and how it works
 
 
------------------------------- IMPORTANT DETAILS -------------------------------------
 
-> SnowFlake
-        - Stage Files
-        - Tasks Automation / Schedule
-        - Dynamic Table
-        - Copy command
+------------------------------- FINISHED QUESTS ----------------------------------
+
+- [x] SnowFlake Project [20/10/2025]
+    Creating an End to End SnowFlake pipeline to display AQI in India
+    Result: SnowFlake => 3
+    > Tools: SnowFlake, SQL, Steramlint, Python
+    > Link: https://github.com/M-G-C-64/AirQualityIndex/tree/main
+    Important_Points:
+        ```
+            - Stage Files
+            - Tasks Automation / Schedule
+            - Dynamic Table
+            - Copy command
+        ```
+
