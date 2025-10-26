@@ -10,6 +10,7 @@ STATS:
 - [ ] Join office gym from November
     <!-- Get the details (Rs.600) -->
     > Get through onec gym web app
+    > Buy gym clothes
 
 ---------------------------------- SKILLS ---------------------------------------
 
