@@ -12,6 +12,8 @@ STATS:
         Tools: S3, GLUE, RedShift, Kinesis, VPC
         Result: AWS => 4
 
+> End to End Data Enginnering project with AWS
+
 > Fundementals of Data Engineering Book
         Finishing the Book and Understanding the concepts inside
         Tools: Data Engineering, Data Modelling
