@@ -2,22 +2,28 @@
 ################################  GC's CAREER  #################################
 
 STATS:
-> Experience        : 2.6 years
-> Salary            : ₹30000
+> Experience        : 2.8 years
+> Salary            : ₹46,000
 
 ------------------------------- ONGOING QUESTS ----------------------------------
 
-> AWS Data Engineering Certification
-        Preparing and Passing the AWS Data Engineering Certification exam
+- [ ] <2> AWS Data Engineering Certification
+    > Preparing and Passing the AWS Data Engineering Certification exam
         Tools: S3, GLUE, RedShift, Kinesis, VPC
         Result: AWS => 4
 
-> End to End Data Enginnering project with AWS
-
-> Fundementals of Data Engineering Book
-        Finishing the Book and Understanding the concepts inside
+- [ ] <3> Fundementals of Data Engineering Book
+    > Finishing the Book and Understanding the concepts inside
         Tools: Data Engineering, Data Modelling
         Result: Data Engineering => 2
+
+- [ ] <4> End to End Data Enginnering project with AWS
+    > Create an end to end dataengineering project applying what you learned in quests {2,3}
+        Result: AWS => 5
+
+- [ ] <5> Find a job as AWS Data Engineering
+    > Find a new job as an AWS Data Engineer
+        Result: Career => 3
 
 ---------------------------------- SKILLS ---------------------------------------
 
@@ -62,7 +68,7 @@ Knows the architechture behind the item and how it works
 
 ------------------------------- FINISHED QUESTS ----------------------------------
 
-- [x] SnowFlake Project [20/10/2025]
+- [x] <1> SnowFlake Project [20/10/2025]
     Creating an End to End SnowFlake pipeline to display AQI in India
     Result: SnowFlake => 3
     > Tools: SnowFlake, SQL, Steramlint, Python

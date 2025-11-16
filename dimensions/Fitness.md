@@ -7,10 +7,14 @@ STATS:
 
 ------------------------------- ONGOING QUESTS ----------------------------------
 
-- [ ] Join office gym from November
+- [x] Join office gym from November
     <!-- Get the details (Rs.600) -->
-    > Get through onec gym web app
+    <!-- Get through onec gym web app -->
     > Buy gym clothes
+
+- [ ] Do 1 pullup
+    > Practice lat pull down by slowly increasing the weights upto 75kg
+    > Do Cardio to reduce your body fat weight
 
 ---------------------------------- SKILLS ---------------------------------------
 
