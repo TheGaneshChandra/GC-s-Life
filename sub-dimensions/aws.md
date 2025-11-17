@@ -3,7 +3,7 @@
 ## Kinesis
 
 ### Kinesis Data stream
-> Near real time bits of data transfer from PRODUCER to CONSUMER
+> Near real time bits of data transfer from PRODUCER to AWS which a PRODUCER can consume
 - Streams
     |
     |-- Shards <!-- Different threads based on partition key of data in a stream -->
