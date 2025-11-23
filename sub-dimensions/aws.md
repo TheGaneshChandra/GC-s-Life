@@ -49,3 +49,52 @@
             |-- ExcatlyOnceProcessing
 
 
+### Kinesis FireHose
+> Fully managed streaming service that **delivers** data to S3, RedShift, OpenSearch, Splunk, Snowflake
+- Delivery Stream <!-- The stream that moves the data from producer to the consumer destination -->
+    ```python
+        
+        import boto3
+        firehose = boto3.client("firehose")
+        firehose.create_delivery_stream(
+            DeliveryStreamName="",
+            S3DestinationConfiguration = {}
+        )
+
+        # send record
+        firehose.put_record(
+            DeliveryStreamName = "",
+            Record = [{}]
+        )
+    ```
+    |
+    |-- Buffering <!-- Firehose delivers data in a batch format, so if buffers the stream data based on chosen size(1MB-128MB), interval(1-900sec) -->
+    |
+    |-- Data Transformtion using Lambda <!-- Lambda function to be executed on each batch before putting into Consumer destination -->
+    |
+    |-- Compression Formats <!-- Can Compress before writing to destination (GZIP, Snappy, ZIP) -->
+    |
+    |-- Data Formats <!-- Can convert the data to desired format (JSON, PARQUET, ORC) before writing  -->
+    |
+    |-- S3 backup mode <!-- if writing to destination fails, will save the data in this backup bucket -->
+    |
+    |-- Auto Retires
+    |
+    |-- AutoScaling
+
+### AWS Managed Apache Flink
+> A distributed processing engine for stateful computations of bounded and unbounded data
+- Stateful Stream processing <!-- Remembers past events, Keep local state on each operator checkpointed to S3/Dynamodb-->
+- Event-Time processing <!-- Processes events when happened, not when arrived -->
+- Exaclty once Stateful processing Guarenteed <!-- Industry standard for exactly once processing -->
+- Windowing functionaliy <!-- events grouped by time or count -->
+- Fault Tolerance, Savepointing <!-- Can restart entire pipeline without losing state -->
+- Batch + Streaming
+
+### AWS Managed Kafka
+> Distributed log-based Event streaming platform used for messaging, **event storage**, and streaming analytics
+- Durable storage layer <!-- Can store data upto years, replay history at any time -->
+- Stream Replay (Time travel) <!-- Consume old data at any offset by any consumer -->
+- Independent Consumers <!-- Consumers can access, replay data independently -->
+- Extremely High-throughput <!-- Millions per second -->
+- Kafka Connect <!-- can be connected to many connectors with no code -->
