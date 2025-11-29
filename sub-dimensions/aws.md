@@ -1,5 +1,8 @@
 # AWS
 
+## Glue
+> https://github.com/TheGaneshChandra/awsglue
+
 ## Kinesis
 
 ### Kinesis Data stream
@@ -47,7 +50,6 @@
             |-- LoadBalancing
             |-- Fault recovery
             |-- ExcatlyOnceProcessing
-
 
 ### Kinesis FireHose
 > Fully managed streaming service that **delivers** data to S3, RedShift, OpenSearch, Splunk, Snowflake
@@ -98,3 +100,49 @@
 - Independent Consumers <!-- Consumers can access, replay data independently -->
 - Extremely High-throughput <!-- Millions per second -->
 - Kafka Connect <!-- can be connected to many connectors with no code -->
+
+## s3
+
+### S3 buckets
+- Buckets
+    |
+    |-- MetaData tables <!-- Iceberg tables containing Data about the objects in the bucket that can be queryed in Athena-->
+    |       |
+    |       |-- Journal Metadata <!-- Default Metadata table, records events occured on objects inside bucket -->
+    |       |       |
+    |       |       |-- SystemDefined <!-- Created automatically by aws, can also manually specify when uploading a new object -->
+    |       |       |-- UserDefined <!-- Custom key value pairs given by user -->
+    |       |
+    |       |-- Inventory Metadata <!-- Metadata table containing list of all objects and version present in the bucket -->
+    |
+    |-- Properties
+            |
+            |-- BucketVersioning <!-- Keeps Versions of objects instead of deleting them permanently -->
+            |-- MFA delete <!-- Needs an MFA key to delete; This can only be enabled using CLI, SDK -->
+            |
+            |-- Bucket AttributeBasedAccessControl ABAC <!-- Uses user defined tags to grant IAM permissions -->
+            |
+            |-- Tags
+            |
+            |-- Encryption
+            |       |
+            |       |-- Server side Encryption with S3 Managed Keys
+            |       |-- Server side Encryption with KMS
+            |       |-- Dual Layer Server side Encryption with KMS
+            |       |-- Server side Encryption with Customer Provided Keys
+            |       |
+            |       |-- S3 Bucket Keys <!-- Uses one temporary key for Bucketlevel Encryption, which is used to create dataKey for each object without reaching out to KMS all the time -->
+            |
+            |-- S3_Intelligent_Tiering <!-- If data access is not predicatable then S3_Intelligent_Tiering; If data access is predictable tjen s3 LifeCycle Rules -->
+            |
+            |-- S3 Server Access Loggging <!-- Logs requests for server access -->
+            |
+            |-- s3_Event_Notifications <!-- Create an Event Notification that notifies when that event occurs, used to trigger other stuff -->
+            |
+            |-- s3_TransferAccelertion 
+            |
+            |-- s3_Object_Lock
+            |
+            |-- Requestor_pays
+            |
+            |-- Static Website Hosting

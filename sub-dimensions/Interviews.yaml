@@ -33,5 +33,5 @@
         - "What are 'Partition Key', 'Sort Key' in Dynamo db"
         - "Any experience in Compute region like EC2 ??"
         - "How do you notify if a new user is registered ??"    : "I would use lambda to trigger an SNS"
-        - "How to let another AWS account access your files ??"
+        - "How to let another AWS account access your files ??" : "Add the another account's Account Id to your bucket policy"
         - "How would you rate yourself in SQL"                  : "I am a 7/10"
