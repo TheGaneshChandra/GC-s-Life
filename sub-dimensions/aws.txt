@@ -103,7 +103,6 @@
 
 ## s3
 
-### S3 buckets
 - Buckets
     |
     |-- MetaData tables <!-- Iceberg tables containing Data about the objects in the bucket that can be queryed in Athena-->
@@ -116,33 +115,79 @@
     |       |-- Inventory Metadata <!-- Metadata table containing list of all objects and version present in the bucket -->
     |
     |-- Properties
-            |
-            |-- BucketVersioning <!-- Keeps Versions of objects instead of deleting them permanently -->
-            |-- MFA delete <!-- Needs an MFA key to delete; This can only be enabled using CLI, SDK -->
-            |
-            |-- Bucket AttributeBasedAccessControl ABAC <!-- Uses user defined tags to grant IAM permissions -->
-            |
-            |-- Tags
-            |
-            |-- Encryption
-            |       |
-            |       |-- Server side Encryption with S3 Managed Keys
-            |       |-- Server side Encryption with KMS
-            |       |-- Dual Layer Server side Encryption with KMS
-            |       |-- Server side Encryption with Customer Provided Keys
-            |       |
-            |       |-- S3 Bucket Keys <!-- Uses one temporary key for Bucketlevel Encryption, which is used to create dataKey for each object without reaching out to KMS all the time -->
-            |
-            |-- S3_Intelligent_Tiering <!-- If data access is not predicatable then S3_Intelligent_Tiering; If data access is predictable tjen s3 LifeCycle Rules -->
-            |
-            |-- S3 Server Access Loggging <!-- Logs requests for server access -->
-            |
-            |-- s3_Event_Notifications <!-- Create an Event Notification that notifies when that event occurs, used to trigger other stuff -->
-            |
-            |-- s3_TransferAccelertion 
-            |
-            |-- s3_Object_Lock
-            |
-            |-- Requestor_pays
-            |
-            |-- Static Website Hosting
+    |       |
+    |       |-- BucketVersioning <!-- Keeps Versions of objects instead of deleting them permanently -->
+    |       |-- MFA delete <!-- Needs an MFA key to delete; This can only be enabled using CLI, SDK -->
+    |       |
+    |       |-- Bucket AttributeBasedAccessControl ABAC <!-- Uses user defined tags to grant IAM permissions -->
+    |       |
+    |       |-- Tags
+    |       |
+    |       |-- Encryption
+    |       |       |
+    |       |       |-- Server side Encryption with S3 Managed Keys
+    |       |       |-- Server side Encryption with KMS
+    |       |       |-- Dual Layer Server side Encryption with KMS
+    |       |       |-- Server side Encryption with Customer Provided Keys
+    |       |       |
+    |       |       |-- S3 Bucket Keys <!-- Uses one temporary key for Bucketlevel Encryption, which is used to create dataKey for each object without reaching out to KMS all the time -->
+    |       |
+    |       |-- S3_Intelligent_Tiering <!-- If data access is not predicatable then S3_Intelligent_Tiering; If data access is predictable tjen s3 LifeCycle Rules -->
+    |       |
+    |       |-- S3 Server Access Loggging <!-- Logs requests for server access -->
+    |       |
+    |       |-- s3_Event_Notifications <!-- Create an Event Notification that notifies when that event occurs, used to trigger other stuff -->
+    |       |
+    |       |-- s3_TransferAccelertion 
+    |       |
+    |       |-- s3_Object_Lock
+    |       |       |
+    |       |       |-- Object Lock Legal Hold <!-- Will not allow the object deletion until the object lock is removed by anyone -->
+    |       |       |-- Object Lock Retention <!-- Not even root user can delete the object until Retention period expires -->
+    |       |
+    |       |-- Requestor_pays
+    |       |
+    |       |-- Static Website Hosting
+    |
+    |-- Management
+    |       |
+    |       |-- LifeCycle configuration <!-- deletes / Moves the selected object versions between storage classes based on given condition -->
+    |       |
+    |       |-- Replication rules <!-- Replicates the selected contents from source bucket to destination bucket -->
+    |       |       |
+    |       |       |-- Replication Time Control <!-- Replicates within 15 mins -->
+    |       |       |-- Delete Marker Replication <!-- Replicates the delete marker also, this is disabled by default -->
+    |       |       |-- Replica Modification Sync <!-- Replicates the metadata changes too -->
+    |       |
+    |       |-- Inventory configuration <!-- Creates reports with list of objects and their metadata -->
+    |
+    |-- Access Points
+    
+- Objects
+    |
+    |-- Checksums <!-- used to check if the data before uploading and after uploading are same using hashing algorithms -->
+
+
+## DynamoDB
+
+- Tables
+    |
+    |-- PartitionKey <!-- Primary key for DynamoDB, stores values in this column as hash and used for quick retreival -->
+    |-- SortKey <!-- If a sort key is provided, then the PartitionKey & SortKey together create a composite Primary key -->
+    |
+    |-- Secondary Index
+    |       |
+    |       |-- Local Secondary Index (LSI) {Creates an Index based on table's parititionKey and new sortkey; used to query based on this new sortkey}
+    |       |-- Global Secondary Index (GSI) {Creates an Index based on given parititionKey and sortKey}
+    |       |
+    |       |-- AttributeProjections {Saves extra Attributes/columns along with PartitionKey, SortKey in the indices}
+    |
+    |-- Table Class
+    |       |
+    |       |-- DynamoDB Standard
+    |       |-- DynamoDB Standard Infrequent-Access (Standard IA)
+    |
+    |-- Capacity
+    |       |
+    |       |-- RCU (Read Capacity Units) {1 RCU: 4kb/sec reading (eventually consistent); 1 RCU: 2kb/sec reading (strongly consistent); 1RCU: 1kb/sec reading (transactional)}
+    |       |-- WCU (Write Capacity Units) {1 WCU: 1kb/sec (standard); 1 WCU: 0.5kb/sec (transactional)}
