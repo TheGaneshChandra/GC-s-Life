@@ -169,7 +169,14 @@
 
 
 ## DynamoDB
-
+```
+# in all dynamodb function calls, we can add these expressions -- these are unique and important
+- ConditionalExpression
+- UpdateExpression
+- ExpressionAttributeNames
+- ExpressionAttributeValues
+- ProjectionExpression
+```
 - Tables
     |
     |-- PartitionKey <!-- Primary key for DynamoDB, stores values in this column as hash and used for quick retreival -->
@@ -189,5 +196,22 @@
     |
     |-- Capacity
     |       |
-    |       |-- RCU (Read Capacity Units) {1 RCU: 4kb/sec reading (eventually consistent); 1 RCU: 2kb/sec reading (strongly consistent); 1RCU: 1kb/sec reading (transactional)}
-    |       |-- WCU (Write Capacity Units) {1 WCU: 1kb/sec (standard); 1 WCU: 0.5kb/sec (transactional)}
+    |       |-- On-demand (we have an option for maximum table throuput to limit)
+    |       |-- Provisioned
+    |                |
+    |                |-- AutoScaling (1-anyupper limit)
+    |                |
+    |                |-- RCU (Read Capacity Units) {1 RCU: 4kb/sec reading (eventually consistent - not so latest results); 1 RCU: 2kb/sec reading (strongly consistent - latest results); 1RCU: 1kb/sec reading (transactional)}
+    |                |-- WCU (Write Capacity Units) {1 WCU: 1kb/sec (standard); 1 WCU: 0.5kb/sec (transactional)}
+    |
+    |-- DynamoDB Streams {provides the Change Data Capture (CDC) to the users in form of streams -- Can also be used as trigger for Lambda functions -- similar to kinesis data streams but most stuff managed by AWS}
+    |
+    |-- Warm throuput (Increases the capcacity before peak events)
+    |
+    |-- Deletion Protection (Protects the table from getting deleted/dropped)
+    |
+    |-- TTL Time to Live (Automatically deletes items after given time expires)
+    |
+    |-- Global Tables (Creates a duplicate table in another region -- uses DynamoDB Streams in the backend)
+    |
+    |-- Point-in-time-recovery (PITR) {Used to take continous backups upto 35days -- Can be restored with specified data backup}
