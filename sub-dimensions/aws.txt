@@ -215,3 +215,17 @@
     |-- Global Tables (Creates a duplicate table in another region -- uses DynamoDB Streams in the backend)
     |
     |-- Point-in-time-recovery (PITR) {Used to take continous backups upto 35days -- Can be restored with specified data backup}
+
+
+## Redshift
+        |
+        |-- Clusters {Collection of nodes}
+                |
+                |-- Nodes {Consider like a server}
+                        |
+                        |-- Node Slices {A Core of the Node's CPU, and the RAM, other stuff also gets splitted}
+                        |
+                        |-- CPU {Here is where the computataion happens, using the L1 cache, RAM, to perform joins etc}
+                        |-- RAM {Used for quick data read}
+                        |-- SSD storage {Used for data storage and used in cases when RAM is insufficient}
+                        |-- NetworkFabric {The Network layer that moves the data to and from outside}
