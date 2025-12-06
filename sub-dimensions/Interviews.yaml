@@ -35,3 +35,40 @@
         - "How do you notify if a new user is registered ??"    : "I would use lambda to trigger an SNS"
         - "How to let another AWS account access your files ??" : "Add the another account's Account Id to your bucket policy"
         - "How would you rate yourself in SQL"                  : "I am a 7/10"
+
+###################  INTERVIEW 3  ######################### 
+
+- Id      : 3
+  Company : Deloitte
+  Role    : AWS Data Engineer
+  Mode    : Virtual
+  Date    : 06/12/2025
+  HR      : depattnaik@deloitte.com
+  Panel   : sumimishra@deloitte.com
+  Rounds  :
+    - Round1    : Teams Interview
+      Questions : 
+        - "Introduce yourself"
+        - "Workflow of your project"
+        - "What are the transformations you used inside glue"
+        - "Difference between re-partition and coalesce"
+        - "Pyspark code on how to convert flat file to csv"
+        - "Pyspark code on how to convert a single column with multiple values into 2 different columns"
+        - "How does pyspark perform re-partition and coalesce in backend"
+        - "What is the difference between View, Materialised View"
+        - "Sql query to get rows with country = 'India' first and others next"
+        - "Difference between char and varchar"
+        - "Which datatype do you use to store a value like '0900'"
+        - "Difference between List, Tuple, Set, Dictionary"
+        - "Print 2 table in python"
+        - "Get the 2nd highest value from list without sorting"
+        - "Experience in Datamodelling"
+        - "What are Slowly Changing Dimensions"
+        - "What are fact, dimesion tables"
+        - "What services have you used in AWS"
+  ToLearn :
+    - "Pyspark"
+    - "SparkSQL"
+    - "SQL Theory"
+    - "RedShift"
+    - "IceBerg"
