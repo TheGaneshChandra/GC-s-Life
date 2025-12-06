@@ -35,6 +35,7 @@
         - "How do you notify if a new user is registered ??"    : "I would use lambda to trigger an SNS"
         - "How to let another AWS account access your files ??" : "Add the another account's Account Id to your bucket policy"
         - "How would you rate yourself in SQL"                  : "I am a 7/10"
+  Rating  : 4/10
 
 ###################  INTERVIEW 3  ######################### 
 
@@ -66,6 +67,7 @@
         - "What are Slowly Changing Dimensions"
         - "What are fact, dimesion tables"
         - "What services have you used in AWS"
+  Rating  : 6/10
   ToLearn :
     - "Pyspark"
     - "SparkSQL"
