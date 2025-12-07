@@ -1,4 +1,7 @@
 # AWS
+> Important Links
+- https://aws.amazon.com/documentation-overview/ {High level overview of service features}
+- https://docs.aws.amazon.com/cli/latest/ {Command line documentation}
 
 ## Glue
 > https://github.com/TheGaneshChandra/awsglue
@@ -117,7 +120,7 @@
     |-- Properties
     |       |
     |       |-- BucketVersioning <!-- Keeps Versions of objects instead of deleting them permanently -->
-    |       |-- MFA delete <!-- Needs an MFA key to delete; This can only be enabled using CLI, SDK -->
+    |       |-- MFA delete <!-- Needs an MFA key to delete--- This can only be enabled using CLI, SDK -->
     |       |
     |       |-- Bucket AttributeBasedAccessControl ABAC <!-- Uses user defined tags to grant IAM permissions -->
     |       |
@@ -132,7 +135,7 @@
     |       |       |
     |       |       |-- S3 Bucket Keys <!-- Uses one temporary key for Bucketlevel Encryption, which is used to create dataKey for each object without reaching out to KMS all the time -->
     |       |
-    |       |-- S3_Intelligent_Tiering <!-- If data access is not predicatable then S3_Intelligent_Tiering; If data access is predictable tjen s3 LifeCycle Rules -->
+    |       |-- S3_Intelligent_Tiering <!-- If data access is not predicatable then S3_Intelligent_Tiering--- If data access is predictable tjen s3 LifeCycle Rules -->
     |       |
     |       |-- S3 Server Access Loggging <!-- Logs requests for server access -->
     |       |
@@ -184,7 +187,7 @@
     |
     |-- Secondary Index
     |       |
-    |       |-- Local Secondary Index (LSI) {Creates an Index based on table's parititionKey and new sortkey; used to query based on this new sortkey}
+    |       |-- Local Secondary Index (LSI) {Creates an Index based on table's parititionKey and new sortkey--- used to query based on this new sortkey}
     |       |-- Global Secondary Index (GSI) {Creates an Index based on given parititionKey and sortKey}
     |       |
     |       |-- AttributeProjections {Saves extra Attributes/columns along with PartitionKey, SortKey in the indices}
@@ -201,8 +204,8 @@
     |                |
     |                |-- AutoScaling (1-anyupper limit)
     |                |
-    |                |-- RCU (Read Capacity Units) {1 RCU: 4kb/sec reading (eventually consistent - not so latest results); 1 RCU: 2kb/sec reading (strongly consistent - latest results); 1RCU: 1kb/sec reading (transactional)}
-    |                |-- WCU (Write Capacity Units) {1 WCU: 1kb/sec (standard); 1 WCU: 0.5kb/sec (transactional)}
+    |                |-- RCU (Read Capacity Units) {1 RCU: 4kb/sec reading (eventually consistent - not so latest results)--- 1 RCU: 2kb/sec reading (strongly consistent - latest results)--- 1RCU: 1kb/sec reading (transactional)}
+    |                |-- WCU (Write Capacity Units) {1 WCU: 1kb/sec (standard)--- 1 WCU: 0.5kb/sec (transactional)}
     |
     |-- DynamoDB Streams {provides the Change Data Capture (CDC) to the users in form of streams -- Can also be used as trigger for Lambda functions -- similar to kinesis data streams but most stuff managed by AWS}
     |
@@ -220,12 +223,50 @@
 ## Redshift
         |
         |-- Clusters {Collection of nodes}
+        |       |
+        |       |-- Nodes {Consider like a server}
+        |       |       |
+        |       |       |-- Types
+        |       |       |       |
+        |       |       |       |-- RA3 Redshift Analytics 3 {New--- Uses RMS--- Decople Compute, Storage--- Multi-AZ as it can just get data from s3}
+        |       |       |       |
+        |       |       |       |-- DC2 Dense Compute 2 {Old--- Uses local SSD--- Sinlge AZ--- Compute, Storage are hardware inside the node--- Recommended for data < 1TB}
+        |       |       |
+        |       |       |-- Architechture
+        |       |               |
+        |       |               |-- Leader Node --> [Compute Node, Compute Node,...]
+        |       |               |
+        |       |               |-- Node Slices {A Core of the Node's CPU, and the RAM, other stuff also gets splitted}
+        |       |               |
+        |       |               |-- CPU {Here is where the computataion happens, using the L1 cache, RAM, to perform joins etc}
+        |       |               |-- RAM {Used for quick data read}
+        |       |               |-- SSD storage {Used for data storage and used in cases when RAM is insufficient}
+        |       |               |-- NetworkFabric {The Network layer that moves the data to and from outside}
+        |       |
+        |       |-- SnapShots {Can instantly copy the entire RMS Data, Metadata to recreate the cluster and store in s3} <Need to know Snapshots != backups>
+        |       |       |
+        |       |       |-- Incremental Snapshots {Captures only changed blocks in RMS}
+        |       |       |-- Automated Snapshots {1 day retention (default) --- Default - Sanpshots taken every 8 hours / 5GBb of data change}
+        |       |       |-- Manual Snapshots {Infinite retention by default}
+        |       |
+        |       |-- Resizing
+        |       |       |
+        |       |       |-- Elastic Resize {Fast --- Change number of nodes without restart --- Cant change node types --- Can only do minor changes --- Nodes have to be same family}
+        |       |       |
+        |       |       |-- Classic Resize {Slow --- Change number of nodes, node types too --- Can change node types --- Can do drastic node changes --- Nodes can be any family}
+        |       |
+        |       |-- Distribution {Distributing / Partitioning Data accross nodes}
+        |               |
+        |               |-- ALL Distribution {Distribute entire table accross nodes}
+        |               |-- KEY Distribution {Distribute based on column}
+        |               |-- EVEN Distribution {Distribute data evenly based on rows}
+        |               |-- AUTO Distribtion {Redshift chooses the Distribution style in the order (ALL -> KEY -> EVEN)}
+        |
+        |        
+        |-- RMS Redshift Managed Storage {Data for the warehouse is stored --- Stores Block Level data in S3 --- Only used in RA3 nodes --- On the backend its either S3 for cold data or SSD of the node for hot data}
                 |
-                |-- Nodes {Consider like a server}
-                        |
-                        |-- Node Slices {A Core of the Node's CPU, and the RAM, other stuff also gets splitted}
-                        |
-                        |-- CPU {Here is where the computataion happens, using the L1 cache, RAM, to perform joins etc}
-                        |-- RAM {Used for quick data read}
-                        |-- SSD storage {Used for data storage and used in cases when RAM is insufficient}
-                        |-- NetworkFabric {The Network layer that moves the data to and from outside}
+                |-- Sharing data accross AWS Regions {Works only with RA3 --- Wont copy data, just sends the related data to other regions SSD from the current region's S3}
+
+## Redshift Serverless
+        |
+        |-- Storage {Uses S3 as underlying storage, no need to load into warehouse again}

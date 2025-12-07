@@ -1,0 +1,3 @@
+
+Views: "Views are just names used as abstactions for sql queries no data is stored"
+Materialized Views: "Materialized Views are views that also store the data of underlying query in a table, that needs to ran to get updated data"
