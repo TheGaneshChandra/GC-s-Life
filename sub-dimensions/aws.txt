@@ -264,8 +264,25 @@
         |
         |        
         |-- RMS Redshift Managed Storage {Data for the warehouse is stored --- Stores Block Level data in S3 --- Only used in RA3 nodes --- On the backend its either S3 for cold data or SSD of the node for hot data}
-                |
-                |-- Sharing data accross AWS Regions {Works only with RA3 --- Wont copy data, just sends the related data to other regions SSD from the current region's S3}
+        |       |
+        |       |-- Sharing data accross AWS Regions {Works only with RA3 --- Wont copy data, just sends the related data to other regions SSD from the current region's S3}
+        |
+        |-- `VACCUM [type_of_vaccum] [[table_name | TO threshold_pct] [BOOST]]` (Used to reclaim space by resorting the table on which detles and updates might have occuerd)
+        |       |
+        |       |-- FULL (Sorts and reclaims space)
+        |       |-- SORT ONLY (Just sorts the table but wont reclaim any space)
+        |       |-- DELETE ONLY (Recalim disk space only, wont sort anything)
+        |       |-- REINDEX (Rebuilds the index of the tables)
+        |       |-- RECLUSTER (Same as FULL Vaccum, but better)
+        |
+        |-- `COPY table_name from 'location' IAM_ROLE 'iamrole'`  (Used to load large amound of data to redshift --- uses Redshift MPP --- support compression --- uses manifest file for s3 files)
+        |
+        |-- `INSERT INTO table select * from table_name` (Inserts data into redshift from catalog table or Redshift spectrum --- Much slower than copy)
+        |
+        |-- `UNLOAD (query) TO 's3 uri ending with _' IAM_ROLE 'iamrole' FORMAT AS PARQUET` (Inserts data into s3 from Redshift based on query)
+        |
+        |-- `ANALYSE table_name` (Used to decide if we need to vaccum the table)
+
 
 ## Redshift Serverless
         |
