@@ -32,9 +32,9 @@
         - "What are Glue crawlers ??"
         - "What are 'Partition Key', 'Sort Key' in Dynamo db"
         - "Any experience in Compute region like EC2 ??"
-        - "How do you notify if a new user is registered ??"    : "I would use lambda to trigger an SNS"
-        - "How to let another AWS account access your files ??" : "Add the another account's Account Id to your bucket policy"
-        - "How would you rate yourself in SQL"                  : "I am a 7/10"
+        - "How do you notify if a new user is registered ??"
+        - "How to let another AWS account access your files ??"
+        - "How would you rate yourself in SQL"
   Rating  : 4/10
 
 ###################  INTERVIEW 3  ######################### 
@@ -44,8 +44,8 @@
   Role    : AWS Data Engineer
   Mode    : Virtual
   Date    : 06/12/2025
-  HR      : depattnaik@deloitte.com
-  Panel   : sumimishra@deloitte.com
+  HR      : depattnaik@deloitte.com; deerohilla.ext@deloitte.com
+  Panel   : sumimishra@deloitte.com; nehag@deloitte.com
   Rounds  :
     - Round1    : Teams Interview
       Questions : 
@@ -67,10 +67,49 @@
         - "What are Slowly Changing Dimensions"
         - "What are fact, dimesion tables"
         - "What services have you used in AWS"
-  Rating  : 6/10
+      Rating  : 6/10
+    - Round2    : Teams Interview
+      Questions :
+        - "Introduce yourself"
+        - "Explain the project"
+        - "What ETL services are you using"
+        - "How do you deploy Glue job with updated code into different environments"
+        - "How do you change the environmental variables in Glue"
+        - "What languages did you use in lambda"
+        - "How can we use additional python modules in lambda"
+        - "Reading a large file in Glue is causing the job to slow down a lot, how do you debug it"
+        - "What tools did you use for orchestration"
+        - "Do you have any experience with AirFlow"
+      Rating  : 6/10
   ToLearn :
     - "Pyspark"
     - "SparkSQL"
     - "SQL Theory"
     - "RedShift"
-    - "IceBerg"
+    - "Airflow"
+    - "Lambda"
+
+###################  INTERVIEW 4  ######################### 
+
+- Id      : 4
+  Company : Hexagon
+  Role    : Principal Data Engineer Consultant
+  Mode    : Virtual
+  Date    : 15/12/2025
+  HR      : sai.ankennagari@hexagon.com
+  Panel   : SULEY Arti
+  Rounds  :
+    - Round1    : Teams Interview
+      Questions : 
+        - "Introduce yourself"
+        - "Explain about your project"
+        - "What transformations did you use in the project"
+        - "Did you create any End to End pipeline"
+        - "Explain about the snowflake project"
+        - "What new things are you learning"
+        - "What are your future plans"
+  Rating  : 7/10
+  ToLearn :
+    - "SnowFlake"
+    - "Tableu"
+
