@@ -282,6 +282,36 @@
         |-- `UNLOAD (query) TO 's3 uri ending with _' IAM_ROLE 'iamrole' FORMAT AS PARQUET` (Inserts data into s3 from Redshift based on query)
         |
         |-- `ANALYSE table_name` (Used to decide if we need to vaccum the table)
+        |
+        |-- Federated Queries (Passes queries to other Independent services like RDS, Aurora for them to compute and copies the result to be used with Redshift data)
+                ``` 
+                CREATE EXTERNAL SCHEMA abc_rds
+                FROM POSTGRES
+                DATABASE 'admin_db'
+                SCHEMA 'dbo'
+                URI 'endpointofRDSDatabase' -- identfies the location of the resource
+                IAM_ROLE 'arn:aws:iam::accountid:role/role_name' -- gets the current IAM role to access the resource
+                SECRET_ARN 'arn:aws:secretsmanager::....' -- gets the uname, pass from aws secrets manager
+                ```
+                |
+                |-- Services
+                        |
+                        |-- RDS (only POSTGRES, MYSQL)
+                        |-- s3 (using Redshift spectrum)
+                        |-- Aurora (only POSTGRES, MYSQL)
+                        |-- Kinesis
+
+        -- Materialized Views (Used to get precomputed resutls based on query)
+                ```
+                    CREATE MATERIALIZED VIEW mv_name
+                    [BACKUP {YES | NO}] -- if yes will be included in redshift snapshots
+                    [table attributes] -- attributes like distribution key, sort key
+                    [AUTO REFRESH {YES | NO}] -- f
+                    AS query
+                ```
+                |
+                |-- Streaming services (using federated queries schema)
+
 
 
 ## Redshift Serverless
