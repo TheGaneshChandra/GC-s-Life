@@ -220,100 +220,196 @@
     |-- Point-in-time-recovery (PITR) {Used to take continous backups upto 35days -- Can be restored with specified data backup}
 
 
-## Redshift
-        |
-        |-- Clusters {Collection of nodes}
-        |       |
-        |       |-- Nodes {Consider like a server}
-        |       |       |
-        |       |       |-- Types
-        |       |       |       |
-        |       |       |       |-- RA3 Redshift Analytics 3 {New--- Uses RMS--- Decople Compute, Storage--- Multi-AZ as it can just get data from s3}
-        |       |       |       |
-        |       |       |       |-- DC2 Dense Compute 2 {Old--- Uses local SSD--- Sinlge AZ--- Compute, Storage are hardware inside the node--- Recommended for data < 1TB}
-        |       |       |
-        |       |       |-- Architechture
-        |       |               |
-        |       |               |-- Leader Node --> [Compute Node, Compute Node,...]
-        |       |               |
-        |       |               |-- Node Slices {A Core of the Node's CPU, and the RAM, other stuff also gets splitted}
-        |       |               |
-        |       |               |-- CPU {Here is where the computataion happens, using the L1 cache, RAM, to perform joins etc}
-        |       |               |-- RAM {Used for quick data read}
-        |       |               |-- SSD storage {Used for data storage and used in cases when RAM is insufficient}
-        |       |               |-- NetworkFabric {The Network layer that moves the data to and from outside}
-        |       |
-        |       |-- SnapShots {Can instantly copy the entire RMS Data, Metadata to recreate the cluster and store in s3} <Need to know Snapshots != backups>
-        |       |       |
-        |       |       |-- Incremental Snapshots {Captures only changed blocks in RMS}
-        |       |       |-- Automated Snapshots {1 day retention (default) --- Default - Sanpshots taken every 8 hours / 5GBb of data change}
-        |       |       |-- Manual Snapshots {Infinite retention by default}
-        |       |
-        |       |-- Resizing
-        |       |       |
-        |       |       |-- Elastic Resize {Fast --- Change number of nodes without restart --- Cant change node types --- Can only do minor changes --- Nodes have to be same family}
-        |       |       |
-        |       |       |-- Classic Resize {Slow --- Change number of nodes, node types too --- Can change node types --- Can do drastic node changes --- Nodes can be any family}
-        |       |
-        |       |-- Distribution {Distributing / Partitioning Data accross nodes}
-        |               |
-        |               |-- ALL Distribution {Distribute entire table accross nodes}
-        |               |-- KEY Distribution {Distribute based on column}
-        |               |-- EVEN Distribution {Distribute data evenly based on rows}
-        |               |-- AUTO Distribtion {Redshift chooses the Distribution style in the order (ALL -> KEY -> EVEN)}
-        |
-        |        
-        |-- RMS Redshift Managed Storage {Data for the warehouse is stored --- Stores Block Level data in S3 --- Only used in RA3 nodes --- On the backend its either S3 for cold data or SSD of the node for hot data}
-        |       |
-        |       |-- Sharing data accross AWS Regions {Works only with RA3 --- Wont copy data, just sends the related data to other regions SSD from the current region's S3}
-        |
-        |-- `VACCUM [type_of_vaccum] [[table_name | TO threshold_pct] [BOOST]]` (Used to reclaim space by resorting the table on which detles and updates might have occuerd)
-        |       |
-        |       |-- FULL (Sorts and reclaims space)
-        |       |-- SORT ONLY (Just sorts the table but wont reclaim any space)
-        |       |-- DELETE ONLY (Recalim disk space only, wont sort anything)
-        |       |-- REINDEX (Rebuilds the index of the tables)
-        |       |-- RECLUSTER (Same as FULL Vaccum, but better)
-        |
-        |-- `COPY table_name from 'location' IAM_ROLE 'iamrole'`  (Used to load large amound of data to redshift --- uses Redshift MPP --- support compression --- uses manifest file for s3 files)
-        |
-        |-- `INSERT INTO table select * from table_name` (Inserts data into redshift from catalog table or Redshift spectrum --- Much slower than copy)
-        |
-        |-- `UNLOAD (query) TO 's3 uri ending with _' IAM_ROLE 'iamrole' FORMAT AS PARQUET` (Inserts data into s3 from Redshift based on query)
-        |
-        |-- `ANALYSE table_name` (Used to decide if we need to vaccum the table)
-        |
-        |-- Federated Queries (Passes queries to other Independent services like RDS, Aurora for them to compute and copies the result to be used with Redshift data)
-                ``` 
-                CREATE EXTERNAL SCHEMA abc_rds
-                FROM POSTGRES
-                DATABASE 'admin_db'
-                SCHEMA 'dbo'
-                URI 'endpointofRDSDatabase' -- identfies the location of the resource
-                IAM_ROLE 'arn:aws:iam::accountid:role/role_name' -- gets the current IAM role to access the resource
-                SECRET_ARN 'arn:aws:secretsmanager::....' -- gets the uname, pass from aws secrets manager
-                ```
-                |
-                |-- Services
-                        |
-                        |-- RDS (only POSTGRES, MYSQL)
-                        |-- s3 (using Redshift spectrum)
-                        |-- Aurora (only POSTGRES, MYSQL)
-                        |-- Kinesis
+Redshift
+    |
+    |-- Clusters {Collection of nodes}
+    |       |
+    |       |-- Nodes {Consider like a server}
+    |       |       |
+    |       |       |-- Types
+    |       |       |       |
+    |       |       |       |-- RA3 Redshift Analytics 3 {New--- Uses RMS--- Decople Compute, Storage--- Multi-AZ as it can just get data from s3}
+    |       |       |       |
+    |       |       |       |-- DC2 Dense Compute 2 {Old--- Uses local SSD--- Sinlge AZ--- Compute, Storage are hardware inside the node--- Recommended for data < 1TB}
+    |       |       |
+    |       |       |-- Architechture
+    |       |               |
+    |       |               |-- Leader Node --> [Compute Node, Compute Node,...]
+    |       |               |
+    |       |               |-- Node Slices {A Core of the Node's CPU, and the RAM, other stuff also gets splitted}
+    |       |               |
+    |       |               |-- CPU {Here is where the computataion happens, using the L1 cache, RAM, to perform joins etc}
+    |       |               |-- RAM {Used for quick data read}
+    |       |               |-- SSD storage {Used for data storage and used in cases when RAM is insufficient}
+    |       |               |-- NetworkFabric {The Network layer that moves the data to and from outside}
+    |       |
+    |       |-- SnapShots {Can instantly copy the entire RMS Data, Metadata to recreate the cluster and store in s3} <Need to know Snapshots != backups>
+    |       |       |
+    |       |       |-- Incremental Snapshots {Captures only changed blocks in RMS}
+    |       |       |-- Automated Snapshots {1 day retention (default) --- Default - Sanpshots taken every 8 hours / 5GBb of data change}
+    |       |       |-- Manual Snapshots {Infinite retention by default}
+    |       |
+    |       |-- Resizing
+    |       |       |
+    |       |       |-- Elastic Resize {Fast --- Change number of nodes without restart --- Cant change node types --- Can only do minor changes --- Nodes have to be same family}
+    |       |       |
+    |       |       |-- Classic Resize {Slow --- Change number of nodes, node types too --- Can change node types --- Can do drastic node changes --- Nodes can be any family}
+    |       |
+    |       |-- Distribution {Distributing / Partitioning Data accross nodes}
+    |               |
+    |               |-- ALL Distribution {Distribute entire table accross nodes}
+    |               |-- KEY Distribution {Distribute based on column}
+    |               |-- EVEN Distribution {Distribute data evenly based on rows}
+    |               |-- AUTO Distribtion {Redshift chooses the Distribution style in the order (ALL -> KEY -> EVEN)}
+    |
+    |        
+    |-- RMS Redshift Managed Storage {Data for the warehouse is stored --- Stores Block Level data in S3 --- Only used in RA3 nodes --- On the backend its either S3 for cold data or SSD of the node for hot data}
+    |       |
+    |       |-- Sharing data accross AWS Regions {Works only with RA3 --- Wont copy data, just sends the related data to other regions SSD from the current region's S3}
+    |
+    |-- Commands
+    |       |
+    |       |-- `VACCUM [type_of_vaccum] [[table_name | TO threshold_pct] [BOOST]]` (Used to reclaim space by resorting the table on which detles and updates might have occuerd)
+    |       |       |
+    |       |       |-- FULL (Sorts and reclaims space)
+    |       |       |-- SORT ONLY (Just sorts the table but wont reclaim any space)
+    |       |       |-- DELETE ONLY (Recalim disk space only, wont sort anything)
+    |       |       |-- REINDEX (Rebuilds the index of the tables)
+    |       |       |-- RECLUSTER (Same as FULL Vaccum, but better)
+    |       |
+    |       |-- `COPY table_name from 'location' IAM_ROLE 'iamrole'`  (Used to load large amound of data to redshift --- uses Redshift MPP --- support compression --- uses manifest file for s3 files)
+    |       |
+    |       |-- `INSERT INTO table select * from table_name` (Inserts data into redshift from catalog table or Redshift spectrum --- Much slower than copy)
+    |       |
+    |       |-- `UNLOAD (query) TO 's3 uri ending with _' IAM_ROLE 'iamrole' FORMAT AS PARQUET` (Inserts data into s3 from Redshift based on query)
+    |       |
+    |       |-- `ANALYSE table_name` (Used to decide if we need to vaccum the table)
+    |
+    |
+    |-- Federated Queries (Passes queries to other Independent services like RDS, Aurora for them to compute and copies the result to be used with Redshift data)
+    |       ``` 
+    |           CREATE EXTERNAL SCHEMA abc_rds
+    |           FROM POSTGRES
+    |           DATABASE 'admin_db'
+    |           SCHEMA 'dbo'
+    |           URI 'endpointofRDSDatabase' -- identfies the location of the resource
+    |           IAM_ROLE 'arn:aws:iam::accountid:role/role_name' -- gets the current IAM role to access the resource
+    |           SECRET_ARN 'arn:aws:secretsmanager::....' -- gets the uname, pass from aws secrets manager
+    |       ```
+    |       |
+    |       |-- Services
+    |               |
+    |               |-- RDS (only POSTGRES, MYSQL)
+    |               |-- s3 (using Redshift spectrum)
+    |               |-- Aurora (only POSTGRES, MYSQL)
+    |               |-- Kinesis
+    |
+    |-- Materialized Views (Used to get precomputed resutls based on query)
+    |       ```
+    |            CREATE MATERIALIZED VIEW mv_name
+    |            [BACKUP {YES | NO}] -- if yes will be included in redshift snapshots
+    |            [table attributes] -- attributes like distribution key, sort key
+    |            [AUTO REFRESH {YES | NO}] -- f
+    |            AS query
+    |       ```
+    |       |
+    |       |-- Streaming services (using federated queries schema)
+    |
+    |-- RedShift Spectrum (A Redshift extension that can scan query s3 tables directly without using redshift cluster computation --- mostly like athena but can be used to join with actual redshift tables --- only for reading cant update, delete, insert --- user should have access to create temporary tables)
+    |       ```
+    |           CREATE EXTERNAL SCHEMA spectrum_schema
+    |           FROM data catalog
+    |           DATABASE 'admin_f1'
+    |           iam_role 'arn:aws:......'
+    |           CREATE EXTERNAL DATABASE IF NOT EXISTS
+    |       ```
+    |       |
+    |       |-- Catalogs
+    |               |
+    |               |-- Glue data catalog
+    |               |-- Apache hive metastore
+    |
+    |-- System tables & Views [https://docs.aws.amazon.com/redshift/latest/dg/cm_chap_system-tables.html]
+    |   (Internal metadata of redshift)
+    |       |
+    |       |-- SVV metadata views 
+    |       |-- SYS monitoring views (present in `pg_catalog` schema)
+    |       |-- STL views for logging 
+    |       |-- STV tables for snapshot data
+    |       |-- SVCS views for main and concurrency scaling Clusters
+    |       |-- SVL views for main cluster
+    |       |-- System catalog tables
+    |
+    |-- Redshift data api (lets you pass an sql query to redshift cluster and execute query on cluster and sends the results back in a json paginated format)
+    |
+    |-- DATASHARE (Redshift sql DDL command used to share read-only data between clusters/workgroups/accounts)
+    |       producer (2342544656)
+    |       ``` 
+    |           CREATE DATASHARE mgc_datashare;
+    |
+    |           ALTER DATASHARE mgc_datashare
+    |           ADD TABLE admin.maintable;
+    |
+    |           ALTER DATASHARE mgc_datashare
+    |           ADD ACCOUNT '1323534524';
+    |       ```
+    |
+    |       consumer (1323534524)
+    |       ```
+    |           CREATE DATABASE my_db_from_mgc
+    |           FROM DATASHARE mgc_datashare
+    |           OF ACCOUNT '2342544656'
+    |           REGION 'ap-south-1';
+    |
+    |-- WORKLOAD MANAGEMENT
+    |       |
+    |       |-- SQA Short Query Acceleration (tasks such as CREATE TABLE, SELECT statements come under this --- will be prioritiezed as the queries will finish quicker)
+    |       |-- Auto workload Management (Allows queries to be ran based on Memory availablity --- performs parallel processing if memory utlization is low)
+    |       |-- Manual Workload Management (Manually set query group routes)
+    |           ```
+    |               SET query_group TO 'etl';
+    |               actual query you are tyring to execute
+    |           ```
+    |
+    |-- MachineLearning (Creates ML functions using sql query)
+    |
+    |-- Access Control in RedShift
+            ```
+                CREATE USER user_123 PASSWORD 'pass_123';
+                CREATE USER superuser_123 PASSWORD 'pass_123' SUPERUSER;
+                CREATE GROUP dev123;
+                ALTER GROUP dev123 ADD USER user_123;
+                GRANT SELECT ON ALL TABLES IN SCHEMA sch123 TO GROUP dev123;
+                CREATE ROLE new_dev123; -- modern replacement for groups
+                GRANT ROLE new_dev123 TO USER user_123;
 
-        -- Materialized Views (Used to get precomputed resutls based on query)
-                ```
-                    CREATE MATERIALIZED VIEW mv_name
-                    [BACKUP {YES | NO}] -- if yes will be included in redshift snapshots
-                    [table attributes] -- attributes like distribution key, sort key
-                    [AUTO REFRESH {YES | NO}] -- f
-                    AS query
-                ```
-                |
-                |-- Streaming services (using federated queries schema)
+                -- Fine Grained Access control
+                GRANT SELECT (column1, column2) ON table123 TO user_123;
+
+                ---------- Row Level policy ----------
+                CREATE RLS POLICY rls_123
+                WITH (policynumber INT)
+                USING (
+                    policynumber IN 
+                        (select policy number from mytable where groupname = "currentproject")
+                );
+
+                ALTER TABLE mytable
+                ADD RLS POLICY rls_123;
+
+                --------- Masking Policy --------
+                CREATE MASKING POLICY mask_email_123
+                WITH (email VARCHAR(256))
+                USING ('*****'::TEXT);
+
+                ATTACH MASKING POLICY
+                ON mytable(email)
+                TO ROLE new_dev_123
+                PRIORITY 20;
+            ```
 
 
 
-## Redshift Serverless
-        |
-        |-- Storage {Uses S3 as underlying storage, no need to load into warehouse again}
+Redshift Serverless (seperate service than normal RedShift, can only join with tables from RedShift using DATASHARE functionality)
+    |
+    |-- Storage {Uses S3 as underlying storage, no need to load into warehouse again}
