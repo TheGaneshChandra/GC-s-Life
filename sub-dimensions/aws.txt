@@ -413,3 +413,25 @@ Redshift
 Redshift Serverless (seperate service than normal RedShift, can only join with tables from RedShift using DATASHARE functionality)
     |
     |-- Storage {Uses S3 as underlying storage, no need to load into warehouse again}
+
+
+
+RDS
+    |
+    |-- Database Instance
+            |
+            |-- Connection
+                    |
+                    |-- Endpoint 
+                    |-- VPC -> Network ACL (check the inbound and outbound rules allow us to connect to our instance)
+                    |-- Security Groups -> Allow your IP (mssql, tcp)
+                    |
+                    |-- Windows
+                    |       |
+                    |       |-- SSMS isntallation
+                    |
+                    |-- Linux
+                            |
+                            |-- install mssql-tools
+                            |-- use sqlcmd to connect to rds endpoint
+            
