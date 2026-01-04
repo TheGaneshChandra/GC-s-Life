@@ -416,22 +416,73 @@ Redshift Serverless (seperate service than normal RedShift, can only join with t
 
 
 
-RDS
+
+
+--------------------------- OTHER DATABASE  --------------------------------------------------------------------------------------------
+|
+|   RDS (Relational Database service)
+|       |
+|       |-- Database Instance
+|               |
+|               |-- Connection
+|                       |
+|                       |-- Endpoint 
+|                       |-- VPC -> Network ACL (check the inbound and outbound rules allow us to connect to our instance)
+|                       |-- Security Groups -> Allow your IP (mssql, tcp)
+|                       |
+|                       |-- Windows
+|                       |       |
+|                       |       |-- SSMS isntallation
+|                       |
+|                       |-- Linux
+|                               |
+|                               |-- install mssql-tools
+|                               |-- use sqlcmd to connect to rds endpoint
+|
+|   Aurora (Better performance than RDS -- MySQL, PostgreSQL)
+|       |
+|       |-- Provisioned
+|       |
+|       |-- Serverless
+|               
+|   Amazon DocuementDB (NoSQL Database with MongoDB)
+|
+|   Amazon Neptune DB (AWS managed graph database)
+|
+|   Amazon Keyspaces (AWS managed Apache Cassandra)
+|
+|   Amazon MemoryDB (AWS managed Redis)
+|
+|   Amazon TimeStream Database (Used for high performace Analytics, ingests from kinesis and Flink)
+|
+|-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+# EC2 (Elastic Compute Cloud)
     |
-    |-- Database Instance
+    |-- Instance Types 
             |
-            |-- Connection
-                    |
-                    |-- Endpoint 
-                    |-- VPC -> Network ACL (check the inbound and outbound rules allow us to connect to our instance)
-                    |-- Security Groups -> Allow your IP (mssql, tcp)
-                    |
-                    |-- Windows
-                    |       |
-                    |       |-- SSMS isntallation
-                    |
-                    |-- Linux
-                            |
-                            |-- install mssql-tools
-                            |-- use sqlcmd to connect to rds endpoint
-            
+            |-- General Purpose (Balance of compute, memeory and network --- M*, Mac*, T*)
+            |-- Compute Optimized (Compute Intensive, cpu performance --- C*)
+            |-- Memory Optimized (Workloads with large datasets --- R*, U*, X*)
+            |-- Storage Optimized (Physically attached disk, very fast IOPS --- D*, H*, I*)
+            |-- Accelerated Computing (Hardware accelertors or co-processors --- D*, F*, G*, I*, P*, B*, T*)
+            |-- High-performance computing (Parallel computing at scale --- H*)
+
+
+AWS Batch ( AWS managed Batch workloads --- compute intesive --- autoscaling --- docker images )
+
+
+AWS SAM Serverless Application model ( Combines Lambda, API Gateway, DynamoDB into a YAML format for quick deployment --- Can mimic AWS in local pc )
+
+
+
+
+AWS Lake Formation (Centralized access and permission control for S3, Glue, Athena, Redshift, DynamoDB)
+    |
+    |-- Features
+            |
+            |-- Row level, column level, cell level access control
+            |-- Cross account data sharing
