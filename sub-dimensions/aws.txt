@@ -478,11 +478,170 @@ AWS Batch ( AWS managed Batch workloads --- compute intesive --- autoscaling ---
 AWS SAM Serverless Application model ( Combines Lambda, API Gateway, DynamoDB into a YAML format for quick deployment --- Can mimic AWS in local pc )
 
 
-
-
 AWS Lake Formation (Centralized access and permission control for S3, Glue, Athena, Redshift, DynamoDB)
     |
     |-- Features
             |
             |-- Row level, column level, cell level access control
             |-- Cross account data sharing
+
+
+AWS EMR (Elastic Map Reduce)
+    |
+    |-- User Controlled distributed compute cluster where you can manager each node
+    |
+    |-- EMR Cluster
+            |
+            |-- Node Tyes
+            |       |
+            |       |-- Master Nodes (Runs YARN Resource Manager, Runs Spark driver node, Runs HDFS NameNode)
+            |       |-- Core Nodes (Runs Spark Executor Nodes, Runds HDFS datanodes --- Stores data and Executes task)
+            |       |-- Task Nodes (Optional Spot nodes, used only for execution)
+            |
+            |-- Resource Management
+            |       |
+            |       |-- YARN (Yet Another Resource Manager)
+            |
+            |-- Processing Frameworks
+            |       |
+            |       |-- Apache spark
+            |       |-- Hadoop mapreduce
+            |       |-- Hive 
+            |       |-- Presto
+            |
+            |-- Storage layer   
+                    |
+                    |-- EMRFS
+                    |-- HDFS
+                    |-- Local File System
+                    |-- EBS
+
+
+Apache Hive (Transalates SQL into tasks for Hadoop/Spark nodes using metastore as metadata)
+
+
+AWS Grafna (Visuvalization tool for live mertics and logs)
+    |
+    |-- Ingestion
+            |
+            |-- CloudWatch
+            |-- TimeStream
+            |-- ElasticSearch
+
+
+AWS OpenSearch (A search engine for billion rows with dashboard builtin)
+< Converts the ingested text into a reverse lookup; eg: row1: "User failed"
+    |                                                   row2: "Failed login"
+    |                                                   >> "failed" : row1, row2
+    |                                                   >> "login"  : row2
+    |                                                   >> "User"   : row1
+    |
+    |-- Domain (Cluster for the OpenSearch)
+            |
+            |-- EndPoint (a web url where we can send POST/PUT/GET requests)
+            |       |
+            |       |-- Ingestion (PUT (single rows) --- POST (send a file) domain_endpoint/index_name/docs_number1/1)
+            |       |-- Search the cluster (GET request to endpoint/index_name/_search?q=marsOrSomeOtherBullshit)
+            |
+            |-- Index (Containers for seperate datasets inside the domain)
+
+     
+QuickSight (Visuvalization and Dashboard service like PowerBI)
+    |
+    |-- SPICE (Super fast, Parallel, In-memeory Calculation Engine --- cache layer stores the data instead of querying source every time0)
+
+
+AWS SageMaker (Simplifies machine learning processes)
+
+
+AWS Step Functions (Similar to Airflow, Orchestration tool)
+    |
+    |-- StateMachine (Workflow)
+            |
+            |-- State
+            |-- Task
+
+
+Amazon Event Bridge (Links different services based on events)
+    |
+    |--Event Bus (All the events are pushed to this network)
+    |       |
+    |       |-- Event Rules (Which event should lead to which target)
+    |               |
+    |               |-- Events
+    |               |       |
+    |               |       |-- Event Pattern Filter
+    |               |       
+    |               |-- Targets
+    |
+    |-- Schedules (This triggers targets without any events, but on sepcified schedules)
+
+
+AppFlow (Used to sync 3rd party apps data with AWS Services, IAM Integration)
+    |
+    |-- Flow (the plan of moving data from source to target)
+
+
+AWS Managed WorkFlows for Apache Airflow [MWAA]
+
+
+AWS SNS ( Simple Notifaction Service --- Pulisher - Subscribe message service )
+    |
+    |-- Topic (Topic holds the messages within)
+    |       |
+    |       |-- Type
+    |               |
+    |               |-- Standard (can Subscribe to email, SQS, sms, mobile endpoints etc)
+    |               |-- FIFO (can only Subscribe to SQS)
+    |                                       
+    |-- Subscription (This holds the connections to which we need to send the messages to)
+
+
+AWS SQS ( BUffer message queue for de-coupling microservices )
+    |
+    |-- Queue (Standard, FIFO)
+
+
+AWS API Gateway
+    |
+    |-- API ( Create new api_id, which will later be used when creating Endpoint eg: https://g74kcjea7d.execute-api.ap-south-1.amazonaws.com/dev )
+    |       |
+    |       |-- API types
+    |       |       |
+    |       |       |-- REST API
+    |       |       |-- HTTP API
+    |       |       |-- WebSocket API ( 2 way persistent connection )
+    |       |
+    |       |-- Resources ( URL Paths eg: /orders, /users )
+    |               |
+    |               |-- Methods 
+    |               |       |
+    |               |       |-- GET
+    |               |       |-- DELETE
+    |               |       |-- PUT
+    |               |       |-- POST
+    |               |
+    |               |-- Integration ( Each method from each api will be routed to their correspoindng servivce )
+    |                       |
+    |                       |-- Lambda
+    |                       |-- AWS Service
+    |                       |-- HTTP endpoint
+    |
+    |-- Stages ( A stage is considered as the published snapshot of the API --- API cant be live without Stage )
+                <stage name gets added as a suffix at the end of api endpoint eg: stage name = "dev"; then end point will be https://g74kcjea7d.execute-api.ap-south-1.amazonaws.com/dev >
+
+
+AWS CloudFormation ( Infrastructure as code )
+
+
+AWS CloudWatch ( AWS Service to monitoring other services in realtime )
+    |
+    |-- CloudWatch Streams ( Can be linked with Kinesis to stream data to OpenSearch, Redshift etc )
+    |-- CloudWatch Alarm ( Can trigger an event/SNS/Lambda if monitoring metric exceeds limit )
+    |-- CloudWatch Logs Agent ( A service for EC2 instances to send logs to CloudWatch )
+
+
+AWS CloudTrail ( Logs all api calls made to all AWS services )
+
+
+AWS Config ( Logs all configuration changes for all AWS services )
