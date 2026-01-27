@@ -645,3 +645,129 @@ AWS CloudTrail ( Logs all api calls made to all AWS services )
 
 
 AWS Config ( Logs all configuration changes for all AWS services )
+
+
+AWS Well Architechted Frameworks
+    |
+    |-- Operational Excellence ( Monitoring, Automating, Improving the workflow of our projects )
+    |-- Security ( Keeping the data protected --- Managing the access --- responding to security events )
+    |-- Relaiability ( Having recovery plan during disasters --- Planning for unexpected spikes in usage )
+    |-- Performance Efficiency ( Using only resources required for demand --- adapt new technology )
+    |-- Cost Optimization ( Reduce and control cost without compromizing on Performance )
+    |-- Sustainability ( Minimizing the usage to reduce emissions )
+
+
+AWS Well Architechted tool (Tool to assess our project against the AWS Well Architechted framework)
+
+
+AWS IAM (Identity Access Management)
+    |
+    |-- Policies ( The json doc that defines permissions to underlying entities )
+    |
+    |-- Users ( Can treat a person as a User )
+    |-- Groups ( Collection of users is a Group )
+    |-- Roles ( An AWS Service is considered as a Role to grant that role IAM access to perform tasks )
+
+
+AWS ECS (Elastic Container Service)
+    |   <Used to deploy and run the Docker containers )
+    |
+    |-- Cluster ( Place where containers run )
+    |       |
+    |       |-- Launch type
+    |               |
+    |               |-- EC2 Instance
+    |               |-- Fargate
+    |
+    |-- Task Definition (Contains all details required to run containers
+    |       |            DockerImage, CPU & Memory, Ports, Env Variables, IAM role, logging)
+    |       |
+    |       |-- Task ( The individual running instance of TaskDefinition )
+    |
+    |-- Task Placment Strategies ( only on EC2 Instance: Plans on how to distribute the Tasks over the instance )
+            |
+            |-- BinPack ( Tasks are placed on same instance until an instance gets filled )
+            |-- Spread  ( Spreads the tasks evenly across all instances )
+            |-- Random ( Distributes the tasks randomly )
+
+
+AWS ECR ( Elastic Container Registery --- Contains all container images)
+
+
+AWS EKS ( Elastic Kubernetes Services )
+    |
+    |-- Control Plane
+
+
+AWS Snow Family ( Move data by physically delivering the hardware to aws datacenters )
+    |
+    |-- Snow Cone       ( Small around 8TB --- Has computing capabilities )
+    |-- Snow ball Edge  ( Medium - 80TB --- compute optimized version has 42 TB )
+    |-- Snow Mobile     ( Large Truck any data > 10PB --- No compute capabiliites)
+
+
+AWS Data Sync ( Used to transfer on prem data to AWS Services upto 10x speed )
+    |
+    |-- DataSync Agent ( this gets insatalled on the On-prem or EC2 instances )
+                       < THis agent uses multi connection and retry logic to upload files to s3 >
+                       < THis agent is also used to sync change data capture to s3 ?
+
+
+AWS DMS (Database migration service)
+    |
+    |-- Replication Instance ( Another EC2 instance that runs the replication work )
+            |
+            |-- Replication Task ( Migration logic and processes )
+                    |
+                    |-- Migration Type (Full load --- Full load + INcremental (CDC) + CDC only)
+                    |-- Table Mappings ( filter in and out tables )
+                    |-- Transformation RUles ( Any modifications on the table schema )
+                    |
+                    |-- Endpoints
+                            |
+                            |-- Source Endpoint ( Connection to the source database )
+                            |-- Target Endpoint ( COnnection to the target endpoint )
+
+
+AWS Application Discovery service ( Collects info with or without Agent about your onprem server and databases to plan for migration )
+
+
+AWS Application Migration Service ( Helps in migration of Apps from Onprem to AWS )
+
+
+AWS VPC Virtual Private Cloud ( Seperate network isolation for our account from other aws accounts ---  we can keep our EC2 and other regional resources here )
+    |
+    |-- Subnets ( One subnet for each Availablity zone )
+    |       |
+    |       |-- Public subnet ( access to internet )
+    |       |-- Private subnet ( no internet access )
+    |
+    |-- NACL Network Access Control List ( Subnet level firewall with rules )
+    |
+    |-- Security Groups ( Instance level firewall with inbound and outbound rules )
+    |
+    |-- Route Tables
+    |       |
+    |       |-- Internet Gateway ( Enables internet accesss to the VPC --- public subnets )
+    |       |-- NAT Gateway      ( Outbound internet for private subnet --- cant receive inbound traffic )
+    |       |-- VPC Peering      ( VPC to VPC private connection without internet )
+    |       |-- VPC Endpoint     ( Private access to other AWS services without internet )
+    |
+    |-- VPN ( Connects on-prem network to VPC using a vpn over the internet )
+    |-- Direct Connect ( Connects the on-prem network with VPC using physical wires; no internet )
+    |
+    |-- VPC flow logs ( Capture information of ip-traffic, in and out of VPC )
+
+
+AWS KMS Key Management Service ( Used for Handling Encryption Keys )
+
+
+AWS Maice ( Identifies PII data )
+
+
+AWS Secrets ( Stores and Rotates Secrets key )
+
+
+AWS Sheild ( Protect against DDOS )
+
+    
