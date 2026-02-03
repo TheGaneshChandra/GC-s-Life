@@ -12,6 +12,8 @@
 > Near real time bits of data transfer from PRODUCER to AWS which a PRODUCER can consume
 - Streams
     |
+    |-- Lambda integration for sub 15 ms latency processing
+    |
     |-- Shards <!-- Different threads based on partition key of data in a stream -->
         |
         |-- Producer <!-- Any device or application that sends data to Kinesis data streams -->
@@ -409,13 +411,9 @@ Redshift
             ```
 
 
-
-Redshift Serverless (seperate service than normal RedShift, can only join with tables from RedShift using DATASHARE functionality)
+Redshift Serverless ( seperate service than normal RedShift --- serverless version of AWS redshift )
     |
     |-- Storage {Uses S3 as underlying storage, no need to load into warehouse again}
-
-
-
 
 
 --------------------------- OTHER DATABASE  --------------------------------------------------------------------------------------------
@@ -441,6 +439,8 @@ Redshift Serverless (seperate service than normal RedShift, can only join with t
 |
 |   Aurora (Better performance than RDS -- MySQL, PostgreSQL)
 |       |
+|       |-- Zero ETL Integration ( Allows us to replicate data between Aurora and RedShift )
+|       |
 |       |-- Provisioned
 |       |
 |       |-- Serverless
@@ -458,6 +458,46 @@ Redshift Serverless (seperate service than normal RedShift, can only join with t
 |-----------------------------------------------------------------------------------------------------------------------------------
 
 
+AWS Lambda
+    |
+    |-- Application
+    |
+    |-- Functions
+            |
+            |-- Versions ( Creates an unmutable version of lambda fuction )
+            |
+            |-- Environment variables 
+            |
+            |-- Layers ( Include custom python packages in a zip folder for lambda to access during run time )
+            |          < Uses .zip file that contians modules in the format "python/module_folder/module.py" > 
+            |
+            |-- Code signing ( Only deploys code when it is verified and signed by verfied profiles )
+            |
+            |-- Concurrency ( Parallel execution for lambda functions )
+            |       |       < Default - one account - 1000 concurrency - per region >
+            |       |
+            |       |-- Reserved Concurrency ( Fixed Min/Max number of instances reserved for this function --- Note that Intsances need to be created at the time of request --- 100 concurrency will always be left for unreserved/unprovisioned functions in lambda )
+            |       |-- Provisioned Concurrency ( Fixed number of instances already created and waiting for request : faster processing than Reserved )               
+            |
+            |-- SnapStart ( Starts the lambda functions without cold starts as it caches the function instance )
+            |
+            |-- configuration
+                    |
+                    |-- VPC ( Setup to make the lambda exist inside your VPC to access resources inside VPC )
+                    |-- File Systems ( Able to mount EFS to lambda if exists in the same VPC )
+
+
+Athena
+    |
+    |-- Partition Projection ( Isntead of looking up each partitions location from glue catalog, Athena can predict the data location based on the parition value --- useful when there are lot of partitions --- can limit the partition ranges and format explicitly )
+    |
+    |-- Workgroups ( Used to seperate users and groups and implement different limits and conditions )
+            |
+            |-- Execution Controls
+                    |
+                    |-- Data scanned limit
+                    |-- Min DPU per query
+                    |-- Max DPU per query
 
 
 # EC2 (Elastic Compute Cloud)
@@ -472,6 +512,16 @@ Redshift Serverless (seperate service than normal RedShift, can only join with t
             |-- High-performance computing (Parallel computing at scale --- H*)
 
 
+AWS Systems Manager ( Helps you manage/view/operate nodes (ec2) at scale in AWS )
+    |
+    |-- Node tools
+            |
+            |-- Systems manager Fleet Manager ( View the health and performance metrics of nodes )
+            |-- Systems manager Session manager ( Without using ports can run commands inside the nodes )
+            |-- Systems manager patch manager ( Applies patches to the OS and apps inside the nodes )
+            |-- Systems manager state manager
+
+
 AWS Batch ( AWS managed Batch workloads --- compute intesive --- autoscaling --- docker images )
 
 
@@ -484,6 +534,7 @@ AWS Lake Formation (Centralized access and permission control for S3, Glue, Athe
             |
             |-- Row level, column level, cell level access control
             |-- Cross account data sharing
+            |-- Data Lineage
 
 
 AWS EMR (Elastic Map Reduce)
@@ -560,6 +611,9 @@ AWS Step Functions (Similar to Airflow, Orchestration tool)
             |
             |-- State
             |-- Task
+
+
+AWS DataSync ( Used to subscribe to dataset from 3rd party vendors )
 
 
 Amazon Event Bridge (Links different services based on events)
@@ -642,6 +696,8 @@ AWS CloudWatch ( AWS Service to monitoring other services in realtime )
 
 
 AWS CloudTrail ( Logs all api calls made to all AWS services )
+    |
+    |-- CloudTrail Lake ( Analyse and query CloudTrail and 3rd party logs )
 
 
 AWS Config ( Logs all configuration changes for all AWS services )
@@ -715,6 +771,8 @@ AWS Data Sync ( Used to transfer on prem data to AWS Services upto 10x speed )
 
 AWS DMS (Database migration service)
     |
+    |-- Data Validation ( when enabled validates row by rwo and aggreagated data )
+    |
     |-- Replication Instance ( Another EC2 instance that runs the replication work )
             |
             |-- Replication Task ( Migration logic and processes )
@@ -769,5 +827,8 @@ AWS Secrets ( Stores and Rotates Secrets key )
 
 
 AWS Sheild ( Protect against DDOS )
+
+
+AWS Data Exchange ( Subscribing to 3rd party datasets with aws )
 
     
