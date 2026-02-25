@@ -6,13 +6,14 @@
 ## Glue
 > https://github.com/TheGaneshChandra/awsglue
 
-## Kinesis
 
 ### Kinesis Data stream
 > Near real time bits of data transfer from PRODUCER to AWS which a PRODUCER can consume
 - Streams
     |
     |-- Lambda integration for sub 15 ms latency processing
+    |
+    |-- Kinesis data analytics runs sql query analytics direclty on the streams
     |
     |-- Shards <!-- Different threads based on partition key of data in a stream -->
         |
@@ -57,6 +58,7 @@
             |-- ExcatlyOnceProcessing
 
 ### Kinesis FireHose
+> This can read data from user directly; it can also read data from Kinesis data streams
 > Fully managed streaming service that **delivers** data to S3, RedShift, OpenSearch, Splunk, Snowflake
 - Delivery Stream <!-- The stream that moves the data from producer to the consumer destination -->
     ```python
@@ -90,6 +92,7 @@
     |-- AutoScaling
 
 ### AWS Managed Apache Flink
+> This cant read data directly from user, this reads data from AWS Kinesis Streams
 > A distributed processing engine for stateful computations of bounded and unbounded data
 - Stateful Stream processing <!-- Remembers past events, Keep local state on each operator checkpointed to S3/Dynamodb-->
 - Event-Time processing <!-- Processes events when happened, not when arrived -->
@@ -130,7 +133,7 @@
     |       |
     |       |-- Encryption
     |       |       |
-    |       |       |-- Server side Encryption with S3 Managed Keys
+    |       |       |-- Server side Encryption with S3 Managed Keys ( we cant manage the keys to restrict access etc )
     |       |       |-- Server side Encryption with KMS
     |       |       |-- Dual Layer Server side Encryption with KMS
     |       |       |-- Server side Encryption with Customer Provided Keys
@@ -143,7 +146,7 @@
     |       |
     |       |-- s3_Event_Notifications <!-- Create an Event Notification that notifies when that event occurs, used to trigger other stuff -->
     |       |
-    |       |-- s3_TransferAccelertion 
+    |       |-- s3_TransferAccelertion <!-- Used AWS Private network once the data is reached to cloudFormation -->
     |       |
     |       |-- s3_Object_Lock
     |       |       |
@@ -167,6 +170,8 @@
     |       |-- Inventory configuration <!-- Creates reports with list of objects and their metadata -->
     |
     |-- Access Points
+
+- Lambda Endpoints ( Used to run custom lambda script on the object before sending it to the user )
     
 - Objects
     |
@@ -222,7 +227,7 @@
     |-- Point-in-time-recovery (PITR) {Used to take continous backups upto 35days -- Can be restored with specified data backup}
 
 
-Redshift
+Redshift ( https://docs.aws.amazon.com/redshift/ )
     |
     |-- Clusters {Collection of nodes}
     |       |
@@ -259,7 +264,7 @@ Redshift
     |       |
     |       |-- Distribution {Distributing / Partitioning Data accross nodes}
     |               |
-    |               |-- ALL Distribution {Distribute entire table accross nodes}
+    |               |-- ALL Distribution {Distribute entire table accross nodes similar to broadcast join}
     |               |-- KEY Distribution {Distribute based on column}
     |               |-- EVEN Distribution {Distribute data evenly based on rows}
     |               |-- AUTO Distribtion {Redshift chooses the Distribution style in the order (ALL -> KEY -> EVEN)}
@@ -276,7 +281,7 @@ Redshift
     |       |       |-- FULL (Sorts and reclaims space)
     |       |       |-- SORT ONLY (Just sorts the table but wont reclaim any space)
     |       |       |-- DELETE ONLY (Recalim disk space only, wont sort anything)
-    |       |       |-- REINDEX (Rebuilds the index of the tables)
+    |       |       |-- REINDEX (For interleaved sort key, performs FULL vaccum in backend)
     |       |       |-- RECLUSTER (Same as FULL Vaccum, but better)
     |       |
     |       |-- `COPY table_name from 'location' IAM_ROLE 'iamrole'`  (Used to load large amound of data to redshift --- uses Redshift MPP --- support compression --- uses manifest file for s3 files)
@@ -311,7 +316,7 @@ Redshift
     |            CREATE MATERIALIZED VIEW mv_name
     |            [BACKUP {YES | NO}] -- if yes will be included in redshift snapshots
     |            [table attributes] -- attributes like distribution key, sort key
-    |            [AUTO REFRESH {YES | NO}] -- f
+    |            [AUTO REFRESH {YES | NO}] --
     |            AS query
     |       ```
     |       |
@@ -335,11 +340,23 @@ Redshift
     |   (Internal metadata of redshift)
     |       |
     |       |-- SVV metadata views 
+    |       |           |
+    |       |           |-- SVV TABLEINFO   ( Contains info about all tables in current db )
+    |       |
     |       |-- SYS monitoring views (present in `pg_catalog` schema)
     |       |-- STL views for logging 
+    |       |           |
+    |       |           |-- STL_QUERY       ( Stores basic DQL,DML queries just upto one line and related info )
+    |       |           |-- STL_QUERYTEXT   ( Stores same as STL_QUERY but stores entire query )
+    |       |           |-- STL_SCAN        ( Used to know about how a query is scanning the table and records number of rows scanned at each step of the query --- need to look at rows_pre_filter and rows_pre_user_filter if differnce run VACCUM )
+    |       |           |-- STL_ALERT_EVENT_LOG     ( Alerts when query performance issue )
+    |       |
     |       |-- STV tables for snapshot data
     |       |-- SVCS views for main and concurrency scaling Clusters
     |       |-- SVL views for main cluster
+    |       |           |
+    |       |           |-- SVL STATEMENTTEXT ( records all quereis ran on the system even DDL )
+    |       |
     |       |-- System catalog tables
     |
     |-- Redshift data api (lets you pass an sql query to redshift cluster and execute query on cluster and sends the results back in a json paginated format)
@@ -364,6 +381,10 @@ Redshift
     |           REGION 'ap-south-1';
     |
     |-- WORKLOAD MANAGEMENT
+    |       |
+    |       |-- Queue ( Segregate queries based on demand and specify conditions on which queries to give priority )
+    |       |       |
+    |       |       |-- Concurrency Scaling ( Creates transient clusters based on demand )
     |       |
     |       |-- SQA Short Query Acceleration (tasks such as CREATE TABLE, SELECT statements come under this --- will be prioritiezed as the queries will finish quicker)
     |       |-- Auto workload Management (Allows queries to be ran based on Memory availablity --- performs parallel processing if memory utlization is low)
@@ -413,38 +434,83 @@ Redshift
 
 Redshift Serverless ( seperate service than normal RedShift --- serverless version of AWS redshift )
     |
-    |-- Storage {Uses S3 as underlying storage, no need to load into warehouse again}
+    |-- Namespaces ( Storage Layer --- Stores one database data, other related stuff like sp, limit, tables etc )
+    |   < each name space can be mapped to only one workspace and viceversa >
+    |-- Workspaces ( Compute layer --- Stores minimal details like base RedshiftProcessingUnits RPU )
+    |
+    |-- Federated queries ( Query data from RDS, Aurora )
+    |
+    |-- Datalake queries ( Query data from S3 )
+    |
+    < cursor memory is limited to 150 MB >
 
 
---------------------------- OTHER DATABASE  --------------------------------------------------------------------------------------------
+    
+
+RDS (Relational Database service)
+    |
+    |-- Database Instance
+            |
+            |-- Connection
+            |       |
+            |       |-- Endpoint 
+            |       |-- VPC -> Network ACL (check the inbound and outbound rules allow us to connect to our instance)
+            |       |-- Security Groups -> Allow your IP (mssql, tcp)
+            |       |
+            |       |-- Windows
+            |       |       |
+            |       |       |-- SSMS isntallation
+            |       |
+            |       |-- Linux
+            |               |
+            |               |-- install mssql-tools
+            |               |-- use sqlcmd to connect to rds endpoint
+            |
+            |-- Database Engines
+            |       |
+            |       |-- IMB Db2
+            |       |-- Maria DB
+            |       |-- Microsoft SQL server
+            |       |-- MySQL
+            |       |-- Oracle
+            |       |-- Postgres
+            |       |
+            |       |-- Aurora ( Better performance than RDS -- 5xMySQL, 3xPostgreSQL )
+            |               |
+            |               |-- Storage: AWS proprietary distributed loosely coupled SSD storage system
+            |               |-- Compute: MySQL compatible engine, Postgres compatible engine
+            |               |
+            |               |-- Zero ETL Integration ( Allows us to replicate data between Aurora and RedShift )
+            |               |
+            |               |-- Provisioned
+            |               |
+            |               |-- Serverless
+            |
+            |-- DB instance class ( determines the physical configuration of instance regarding memory, computation )
+            |       |
+            |       |-- General purpose     --- db.m*
+            |       |-- Memory optimized    --- db.z* , db.x* , db.r*
+            |       |-- Compute optimized   --- db.c*
+            |       |-- Burstable perform   --- db.t*
+            |       |-- optimized read      --- db.**gd
+            |
+            |-- DB Storage ( Uses Elastic Block store )
+            |       |
+            |       |-- Provisioned IOPS SSD
+            |       |-- General Purpose SSD
+            |       |-- Magnetic 
+            |
+            |-- Multi AZ (major difference between 2 below)
+            |       |
+            |       |-- Multi AZ Instance deployment ( 1_Main_DB (write/read) ---replication---> 1_Standby_DB )
+            |       |-- Multi AZ Cluster deployment ( 1_Main_DB (write) ---replication---> 2_Standby_DB (read_replica) )
+            |
+            |-- Backups ( Uses snapshots to take backups )
+
+
+
+-------------------------- OTHER DATABASE  --------------------------------------------------------------------------------------------
 |
-|   RDS (Relational Database service)
-|       |
-|       |-- Database Instance
-|               |
-|               |-- Connection
-|                       |
-|                       |-- Endpoint 
-|                       |-- VPC -> Network ACL (check the inbound and outbound rules allow us to connect to our instance)
-|                       |-- Security Groups -> Allow your IP (mssql, tcp)
-|                       |
-|                       |-- Windows
-|                       |       |
-|                       |       |-- SSMS isntallation
-|                       |
-|                       |-- Linux
-|                               |
-|                               |-- install mssql-tools
-|                               |-- use sqlcmd to connect to rds endpoint
-|
-|   Aurora (Better performance than RDS -- MySQL, PostgreSQL)
-|       |
-|       |-- Zero ETL Integration ( Allows us to replicate data between Aurora and RedShift )
-|       |
-|       |-- Provisioned
-|       |
-|       |-- Serverless
-|               
 |   Amazon DocuementDB (NoSQL Database with MongoDB)
 |
 |   Amazon Neptune DB (AWS managed graph database)
@@ -489,7 +555,33 @@ AWS Lambda
 
 Athena
     |
+    |-- Query Editor ( Where you would write your sql queries )
+    |       |
+    |       |-- Query Settings
+    |               |
+    |               |-- QueryResult Encryption
+    |               |       |
+    |               |       |-- Query output location
+    |               |       |-- S3 bucket owner ship
+    |               |       |-- Query encrytption
+    |               |
+    |               |-- Execution Controls
+    |                       |
+    |                       |-- Data scanned limit
+    |                       |-- Min number of DPU
+    |                       |-- Max number of DPU
+    |
+    |-- NoteBook ( Uses jupyter notebook style editor to run SPARK code against s3 data --- Will use tables like iceberg etc )
+    |
     |-- Partition Projection ( Isntead of looking up each partitions location from glue catalog, Athena can predict the data location based on the parition value --- useful when there are lot of partitions --- can limit the partition ranges and format explicitly )
+    |
+    |-- Capacity Reservations ( Reserve capacity and use Athena on a discounted price )
+    |
+    |-- Data sources and connectors
+    |       |
+    |       |-- Create Data Source ( Choose from many datasources --- Uses exisitng Glue connector to connect to that datastore )
+    |
+    |-- Federated Queries ( Using JDBC url and making a connection in Glue, we can access the data from athena )
     |
     |-- Workgroups ( Used to seperate users and groups and implement different limits and conditions )
             |
@@ -503,13 +595,51 @@ Athena
 # EC2 (Elastic Compute Cloud)
     |
     |-- Instance Types 
+    |       |
+    |       |-- General Purpose (Balance of compute, memeory and network --- M*, Mac*, T*)
+    |       |-- Burstable Instances (temporary peak traffic --- T*)
+    |       |-- Compute Optimized (Compute Intensive, cpu performance --- C*)
+    |       |-- Memory Optimized (Workloads with large datasets --- R*, U*, X*)
+    |       |-- Storage Optimized (Physically attached disk, very fast IOPS --- D*, H*, I*)
+    |       |-- Accelerated Computing (Hardware accelertors or co-processors --- D*, F*, G*, I*, P*, B*, T*)
+    |       |-- High-performance computing (Parallel computing at scale --- H*)
+    |
+    |-- AMI Amazon machine Image ( Contains the software that is used to create an EC2 Instance )
+    |
+    |-- EC2 Fleet ( Launch many number of, anytype, any AZ instances at once )
+    |
+    |-- Networking
+    |       |
+    |       |-- Elastic IP ( We can assign the same Elastic IP to any INstnace )
+    |
+    |-- Placement groups ( The way to physically distribute multiple EC2 instances )
+    |       |
+    |       |-- Cluster ( Keeps all instances side by side)
+    |       |-- Partitioned ( Partitions the instnaces based on given condition and spereads each partition into different servers )
+    |       |-- Spread ( Strictly places instances in different hardware servers to avoid failure of all )
+    |
+    |-- storage
+    |       |
+    |       |-- EBS Elastic Block Store ( Permaenent Block storage that can be attached to EC2)
+    |       |       |
+    |       |       |-- EBS Volumes ( Individual volumes that you can attach to EC2 )
+    |       |       |-- EBS Snapshots ( Backup of entire EBS )
+    |       |
+    |       |-- Instance Store ( Temporary Block Storge --- The inbuilt physical disks from EC2 server )
+    |       |
+    |       |-- Root Volume ( ONly consists of the AMI that is used to create the instance )
+    |       |
+    |       |-- File Storage
+    |               |
+    |               |-- S3
+    |               |-- EFS
+    |               |-- FSX (for windows)
+    |               |-- File Cache
+    |
+    |-- Monitoring Resources
             |
-            |-- General Purpose (Balance of compute, memeory and network --- M*, Mac*, T*)
-            |-- Compute Optimized (Compute Intensive, cpu performance --- C*)
-            |-- Memory Optimized (Workloads with large datasets --- R*, U*, X*)
-            |-- Storage Optimized (Physically attached disk, very fast IOPS --- D*, H*, I*)
-            |-- Accelerated Computing (Hardware accelertors or co-processors --- D*, F*, G*, I*, P*, B*, T*)
-            |-- High-performance computing (Parallel computing at scale --- H*)
+            |-- System Status Check     ( Check weather the AWS system used to keep instnaces is working )
+            |-- Instance Status Check   ( CHeck our instnace status )
 
 
 AWS Systems Manager ( Helps you manage/view/operate nodes (ec2) at scale in AWS )
@@ -529,6 +659,8 @@ AWS SAM Serverless Application model ( Combines Lambda, API Gateway, DynamoDB in
 
 
 AWS Lake Formation (Centralized access and permission control for S3, Glue, Athena, Redshift, DynamoDB)
+    |
+    |-- Cataloag ( We can create federated catalogs of Redshift/SnowFlake/Azure that can be used in glue, athena )
     |
     |-- Features
             |
@@ -569,6 +701,7 @@ AWS EMR (Elastic Map Reduce)
 
 
 Apache Hive (Transalates SQL into tasks for Hadoop/Spark nodes using metastore as metadata)
+> S3 files are usuallys stored in Hive suppored format (column=value) like: s3:/bucket/formula1/year=2001/month=2/day=23/sdfasdfasdfas.parquet
 
 
 AWS Grafna (Visuvalization tool for live mertics and logs)
@@ -587,6 +720,8 @@ AWS OpenSearch (A search engine for billion rows with dashboard builtin)
     |                                                   >> "login"  : row2
     |                                                   >> "User"   : row1
     |
+    |-- Open Search Dashboard ( We can run queries here to get the results (like Athena) )
+    |
     |-- Domain (Cluster for the OpenSearch)
             |
             |-- EndPoint (a web url where we can send POST/PUT/GET requests)
@@ -595,6 +730,10 @@ AWS OpenSearch (A search engine for billion rows with dashboard builtin)
             |       |-- Search the cluster (GET request to endpoint/index_name/_search?q=marsOrSomeOtherBullshit)
             |
             |-- Index (Containers for seperate datasets inside the domain)
+            |
+            |-- Pipelines ( Handles scaling, data transfer from source to OpenSearch )
+            |
+            |-- Direct Queires ( Using the Connection Feature and connecting to required sources (S3/CloudWatch) )
 
      
 QuickSight (Visuvalization and Dashboard service like PowerBI)
@@ -603,6 +742,16 @@ QuickSight (Visuvalization and Dashboard service like PowerBI)
 
 
 AWS SageMaker (Simplifies machine learning processes)
+    |
+    |-- Model Artifacts ( will be stored in S3 bucket )
+    |
+    |-- SageMaker Ground Truth; Processing JObs     ( Used to prepare data and Labelling )
+    |-- SageMaker Jumpstart                         ( Provides open source ML models for beginners )
+    |-- SageMaker Feature store                     ( Used for create, store, sharing features )
+    |-- Sagemaker Notebooks; Built-in Algorithms    ( Used to build models and write code )
+    |-- SageMaker Debugger                          ( Used for degugging ML output and notify user )
+    |-- SageMaker Autopilot                         ( Used to automated ML tasks )
+    |-- SageMakere Real time endpoint Batch transform (deployment)
 
 
 AWS Step Functions (Similar to Airflow, Orchestration tool)
@@ -610,7 +759,11 @@ AWS Step Functions (Similar to Airflow, Orchestration tool)
     |-- StateMachine (Workflow)
             |
             |-- State
-            |-- Task
+                    |
+                    |-- Task ( Actual work )
+                    |-- Choice ( Like an if condition )
+                    |-- Parallel ( Starts give multiple tasks in parallel )
+                    |-- Map ( Applies given transform/workflow for all tasks in parallel )
 
 
 AWS DataSync ( Used to subscribe to dataset from 3rd party vendors )
