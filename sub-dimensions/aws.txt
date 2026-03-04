@@ -953,9 +953,9 @@ AWS VPC Virtual Private Cloud ( Seperate network isolation for our account from 
     |       |-- Public subnet ( access to internet )
     |       |-- Private subnet ( no internet access )
     |
-    |-- NACL Network Access Control List ( Subnet level firewall with rules )
+    |-- NACL Network Access Control List ( Subnet level firewall with rules --- stateless, you have to give both inbound and outbound rules )
     |
-    |-- Security Groups ( Instance level firewall with inbound and outbound rules )
+    |-- Security Groups ( Instance level firewall with inbound and outbound rules --- stateful you can give only one inbound it will automatically allow outboud )
     |
     |-- Route Tables
     |       |
