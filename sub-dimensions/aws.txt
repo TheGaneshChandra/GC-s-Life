@@ -59,7 +59,7 @@
 
 ### Kinesis FireHose
 > This can read data from user directly; it can also read data from Kinesis data streams
-> Fully managed streaming service that **delivers** data to S3, RedShift, OpenSearch, Splunk, Snowflake
+> Fully managed streaming service that **delivers** data to , RedShift, OpenSearch, Splunk, Snowflake
 - Delivery Stream <!-- The stream that moves the data from producer to the consumer destination -->
     ```python
         
@@ -67,7 +67,7 @@
         firehose = boto3.client("firehose")
         firehose.create_delivery_stream(
             DeliveryStreamName="",
-            S3DestinationConfiguration = {}
+            DestinationConfiguration = {}
         )
 
         # send record
@@ -85,7 +85,7 @@
     |
     |-- Data Formats <!-- Can convert the data to desired format (JSON, PARQUET, ORC) before writing  -->
     |
-    |-- S3 backup mode <!-- if writing to destination fails, will save the data in this backup bucket -->
+    |--  backup mode <!-- if writing to destination fails, will save the data in this backup bucket -->
     |
     |-- Auto Retires
     |
@@ -94,7 +94,7 @@
 ### AWS Managed Apache Flink
 > This cant read data directly from user, this reads data from AWS Kinesis Streams
 > A distributed processing engine for stateful computations of bounded and unbounded data
-- Stateful Stream processing <!-- Remembers past events, Keep local state on each operator checkpointed to S3/Dynamodb-->
+- Stateful Stream processing <!-- Remembers past events, Keep local state on each operator checkpointed to /Dynamodb-->
 - Event-Time processing <!-- Processes events when happened, not when arrived -->
 - Exaclty once Stateful processing Guarenteed <!-- Industry standard for exactly once processing -->
 - Windowing functionaliy <!-- events grouped by time or count -->
@@ -137,6 +137,7 @@
     |       |       |-- Server side Encryption with KMS
     |       |       |-- Dual Layer Server side Encryption with KMS
     |       |       |-- Server side Encryption with Customer Provided Keys
+    |       |       |-- Can't encrypt Object Metadata
     |       |       |
     |       |       |-- S3 Bucket Keys <!-- Uses one temporary key for Bucketlevel Encryption, which is used to create dataKey for each object without reaching out to KMS all the time -->
     |       |
