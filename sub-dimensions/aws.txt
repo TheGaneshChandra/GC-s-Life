@@ -186,6 +186,7 @@
 - ExpressionAttributeNames
 - ExpressionAttributeValues
 - ProjectionExpression
+- Atomic Counters ( A defualt AWS dynamo db feature to handle concurrent writes )
 ```
 - Tables
     |
