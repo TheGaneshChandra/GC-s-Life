@@ -770,6 +770,7 @@ AWS DataSync ( Used to subscribe to dataset from 3rd party vendors )
 
 
 Amazon Event Bridge (Links different services based on events)
+< Push type of messaging --- One message can be pushed to many consumers >
     |
     |--Event Bus (All the events are pushed to this network)
     |       |
@@ -805,6 +806,7 @@ AWS SNS ( Simple Notifaction Service --- Pulisher - Subscribe message service )
 
 
 AWS SQS ( BUffer message queue for de-coupling microservices )
+< SQS - PULL messaging system from consumer -  ( one message cant be read by more than one consumer ) >
     |
     |-- Queue (Standard, FIFO)
 
